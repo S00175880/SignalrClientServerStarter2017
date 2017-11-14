@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
 using GameData;
+using CameraNS;
 
 namespace Sprites
 {
@@ -86,8 +87,23 @@ namespace Sprites
             SpriteImage = _textures[(int)_direction];
             // Update internal player data for messages
             oldPosition = playerData.playerPosition;
-            playerData = new PlayerData { playerPosition = new Position { X = (int)Position.X, Y = (int)Position.Y } };
+            playerData.playerPosition = new Position { X = (int)Position.X, Y = (int)Position.Y};
             
+        }
+
+        public override void Draw(GameTime gameTime)
+        {
+            int imageWidth = BoundingRect.Width;
+            string playerTag = playerData.GamerTag;
+            SpriteFont font = Game.Services.GetService <SpriteFont>();
+            SpriteBatch sp = Game.Services.GetService<SpriteBatch>();
+            Vector2 fontsize = font.MeasureString(playerTag);
+            Vector2 textPos = BoundingRect.Location.ToVector2() - new Vector2(imageWidth - fontsize.X / 2, fontsize.Y);
+            sp.Begin(SpriteSortMode.Immediate, null, null, null, null, null, Camera.CurrentCameraTranslation);
+            sp.DrawString(font, playerTag, textPos, Color.White);
+            sp.End();
+
+            base.Draw(gameTime);
         }
     }
 }
